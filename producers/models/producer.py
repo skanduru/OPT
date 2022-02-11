@@ -1,14 +1,18 @@
 """Producer base-class providing common utilites and functionality"""
 import logging
 import time
+import asyncio
 
 
 from confluent_kafka import avro
 from confluent_kafka.admin import AdminClient, NewTopic
-from confluent_kafka.avro import AvroProducer
+from confluent_kafka.avro import AvroProducer, CachedSchemaRegistryClient
 
 logger = logging.getLogger(__name__)
 
+KAFKA_URL="PLAINTEXT://0.0.0.0:9092"
+ZOOKEEPER_URL="0.0.0.0:2181"
+SCHEMA_REGISTRY_URL="http://0.0.0.0:8081"
 
 class Producer:
     """Defines and provides common functionality amongst Producers"""
@@ -25,6 +29,7 @@ class Producer:
         num_replicas=1,
     ):
         """Initializes a Producer object with basic settings"""
+        self._loop = asyncio.get_event_loop()
         self.topic_name = topic_name
         self.key_schema = key_schema
         self.value_schema = value_schema
@@ -36,31 +41,69 @@ class Producer:
         # TODO: Configure the broker properties below. Make sure to reference the project README
         # and use the Host URL for Kafka and Schema Registry!
         #
-        #
+        # bootstrap, zookeeper and schema registry configs
         self.broker_properties = {
-            # TODO
-            # TODO
-            # TODO
+            'KAFKA': KAFKA_URL,                      # Kafka broker
+            'ZOOKEEPER': ZOOKEEPER_URL,              # Zookeeper
+            'SCHEMA_REGISTRY': SCHEMA_REGISTRY_URL,  # Schema-Registry Server
         }
+
+        # Create a Cached Schema Registry client
+        schema_registry = CachedSchemaRegistryClient({'url': self.broker_properties.get('SCHEMA_REGISTRY')})
 
         # If the topic does not already exist, try to create it
         if self.topic_name not in Producer.existing_topics:
-            self.create_topic()
-            Producer.existing_topics.add(self.topic_name)
+            # Add a topic if it is not already in the list
+            if self.create_topic([self.topic_name]):
+                Producer.existing_topics.add(self.topic_name)
 
-        # TODO: Configure the AvroProducer
-        # self.producer = AvroProducer(
-        # )
+        # Configure the AvroProducer
+        self.producer = AvroProducer(
+            {'bootstrap.servers': self.broker_properties.get('KAFKA')},
+            schema_registry = schema_registry,
+            default_key_schema = key_schema,
+            default_value_schema = value_schema,
+        )
 
-    def create_topic(self):
+    def produce(self, topic, key, value):
+        result = self._loop.create_future()
+        def ack(err, msg):
+            if err:
+                self._loop.call_soon_threadsafe(result.set_exception,
+                    KafkaException(err))
+            else:
+                self._loop.call_soon_threadsafe(result.set_result, msg)
+        self.producer.produce(
+            topic=self.topic_name,
+            key = key, value = value, on_delivery = ack)
+        return result
+
+    def create_topic(self, topics):
         """Creates the producer topic if it does not already exist"""
         #
+        # Create new topics
+        new_topics = [NewTopic(topic, num_partitions=3, replication_factor=1, \
+                         config = {
+                            "compression.type": "lz4"
+                         }) \
+                        for topic in topics]
         #
+        if not hasattr(self, 'admin_client'):
+            admin_client = AdminClient({'bootstrap.servers': \
+                       self.broker_properties.get('KAFKA')})
+            self.admin_client = admin_client
         # TODO: Write code that creates the topic for this producer if it does not already exist on
-        # the Kafka Broker.
-        #
-        #
-        logger.info("topic creation kafka integration incomplete - skipping")
+        # Get the existing topics
+        topic_meta = admin_client.list_topics(timeout = 5)
+        dup = False
+        all_topics = []
+        for key,val in topic_meta.topics.items():
+            all_topics.append(val.topic)
+        for new_topic in new_topics:
+            if new_topic.topic in all_topics:
+                dup = True
+        return not dup
+
 
     def time_millis(self):
         return int(round(time.time() * 1000))
@@ -72,6 +115,12 @@ class Producer:
         # TODO: Write cleanup code for the Producer here
         #
         #
+        # Delete all topics
+        if hasattr(self, 'admin_client'):
+            list_topics = self.admin_client.list_topics()
+            if list_topics:
+                self.admin_client.delete_topics(list_topics.topics.values())
+
         logger.info("producer close incomplete - skipping")
 
     def time_millis(self):
