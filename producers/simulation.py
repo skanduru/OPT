@@ -7,14 +7,19 @@ from enum import IntEnum
 import logging
 import logging.config
 from pathlib import Path
+import os, sys
 
 import pandas as pd
+
+sys.path
+top_dir = os.path.abspath('.')
+sys.path.append(top_dir)
 
 # Import logging before models to ensure configuration is picked up
 logging.config.fileConfig(f"{Path(__file__).parents[0]}/logging.ini")
 
-from connector import configure_connector
-from models import Line, Weather
+from .connector import configure_connector
+from .models import Line, Weather
 
 
 logger = logging.getLogger(__name__)
@@ -59,9 +64,11 @@ class TimeSimulation:
         curr_time = datetime.datetime.utcnow().replace(
             hour=0, minute=0, second=0, microsecond=0
         )
+        """
         logger.info("Beginning simulation, press Ctrl+C to exit at any time")
         logger.info("loading kafka connect jdbc source connector")
         configure_connector()
+        """
 
         logger.info("beginning cta train simulation")
         weather = Weather(curr_time.month)

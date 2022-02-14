@@ -2,6 +2,7 @@
 import logging
 import time
 import asyncio
+import re
 
 
 from confluent_kafka import avro
@@ -10,9 +11,19 @@ from confluent_kafka.avro import AvroProducer, CachedSchemaRegistryClient
 
 logger = logging.getLogger(__name__)
 
-KAFKA_URL="PLAINTEXT://0.0.0.0:9092"
-ZOOKEEPER_URL="0.0.0.0:2181"
-SCHEMA_REGISTRY_URL="http://0.0.0.0:8081"
+KAFKA_URL="PLAINTEXT://localhost:9092"
+ZOOKEEPER_URL="localhost:2181"
+SCHEMA_REGISTRY_URL="http://localhost:8081"
+
+def topic_pattern_exists(meta, pattern):
+    topics = set(t.topic for t in iter(meta.topics.values()))
+    pat = re.compile(pattern)
+    match = []
+    for x in topics:
+        m = pat.search(x)
+        if m:
+            match.append(m.group(0))
+    return match
 
 class Producer:
     """Defines and provides common functionality amongst Producers"""
@@ -37,10 +48,6 @@ class Producer:
         self.num_replicas = num_replicas
 
         #
-        #
-        # TODO: Configure the broker properties below. Make sure to reference the project README
-        # and use the Host URL for Kafka and Schema Registry!
-        #
         # bootstrap, zookeeper and schema registry configs
         self.broker_properties = {
             'KAFKA': KAFKA_URL,                      # Kafka broker
@@ -54,7 +61,8 @@ class Producer:
         # If the topic does not already exist, try to create it
         if self.topic_name not in Producer.existing_topics:
             # Add a topic if it is not already in the list
-            if self.create_topic([self.topic_name]):
+            create = self.create_topic([self.topic_name])
+            if create[0]:
                 Producer.existing_topics.add(self.topic_name)
 
         # Configure the AvroProducer
@@ -92,17 +100,30 @@ class Producer:
             admin_client = AdminClient({'bootstrap.servers': \
                        self.broker_properties.get('KAFKA')})
             self.admin_client = admin_client
-        # TODO: Write code that creates the topic for this producer if it does not already exist on
-        # Get the existing topics
+
+        # Make sure the topics does not exist
         topic_meta = admin_client.list_topics(timeout = 5)
+        topic_pattern_exists(topic_meta, 'jsontest')
         dup = False
         all_topics = []
         for key,val in topic_meta.topics.items():
             all_topics.append(val.topic)
-        for new_topic in new_topics:
+        create = [True] * len(new_topics)
+        topics = []
+        for index, new_topic in enumerate(new_topics):
             if new_topic.topic in all_topics:
-                dup = True
-        return not dup
+                create[index] = False
+            else:
+                topics.append(new_topic)
+        if topics:
+            futures = admin_client.create_topics(topics)
+            for topic, future in futures.items():
+                try:
+                    future.result()
+                    logger.debug('{topic.topic} created')
+                except:
+                    logger.debug('failed to create {topic.topic}')
+        return create
 
 
     def time_millis(self):
@@ -112,14 +133,16 @@ class Producer:
         """Prepares the producer for exit by cleaning up the producer"""
         #
         #
-        # TODO: Write cleanup code for the Producer here
+        # cleanup code for the Producer here
         #
         #
-        # Delete all topics
+        # Delete all topics. For now!
         if hasattr(self, 'admin_client'):
             list_topics = self.admin_client.list_topics()
             if list_topics:
                 self.admin_client.delete_topics(list_topics.topics.values())
+        self.producer.flush(timeout = 10)
+        self.producer.close()
 
         logger.info("producer close incomplete - skipping")
 

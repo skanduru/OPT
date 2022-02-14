@@ -119,9 +119,9 @@ services:
   schema-registry-ui:
     image: landoop/schema-registry-ui:0.9.5
     ports:
-    - "8087:8087"
+    - "8086:8086"
     environment:
-      PORT: "8087"
+      PORT: "8086"
       PROXY: "true"
       SCHEMAREGISTRY_URL: "http://schema-registry:8081/"
     depends_on:
@@ -131,12 +131,16 @@ services:
 
   postgres:
     image: postgres:11
+    # entrypoint: /bin/bash
+    # tty: true
     ports:
     - "5432:5432"
     environment:
       POSTGRES_USER: "cta_admin"
       POSTGRES_PASSWORD: "chicago"
       POSTGRES_DB: "cta"
+    sysctls:
+    - net.ipv6.conf.all.disable_ipv6=1
     volumes:
     - ./producers/data/cta_stations.csv:/tmp/cta_stations.csv
     - ./load_stations.sql:/docker-entrypoint-initdb.d/load_stations.sql

@@ -12,25 +12,21 @@ logger = logging.getLogger(__name__)
 
 KSQL_URL = "http://localhost:8088"
 
-#
-# TODO: Complete the following KSQL statements.
-# TODO: For the first statement, create a `turnstile` table from your turnstile topic.
-#       Make sure to use 'avro' datatype!
-# TODO: For the second statment, create a `turnstile_summary` table by selecting from the
-#       `turnstile` table and grouping on station_id.
-#       Make sure to cast the COUNT of station id to `count`
-#       Make sure to set the value format to JSON
 
 KSQL_STATEMENT = """
 CREATE TABLE turnstile (
-    ???
-) WITH (
-    ???
+    STATION_ID INTEGER,
+    STATION_NAME VARCHAR,
+    Line VARCHAR,
+) WITH (KAFKA_TOPIC='turnstile',
+      VALUE_FORMAT='avro',
+      key='STATION_ID');
 );
 
 CREATE TABLE turnstile_summary
-WITH (???) AS
-    ???
+WITH (KAFKA_TOPIC='TURNSTILE_SUMMARY', VALUE_FORMAT='json') AS
+    SELECT STATION_ID, STATION_NAME, COUNT(STATION_ID) as COUNT
+    FROM turnstile GROUP BY STATION_ID, STATION_NAME;
 """
 
 
@@ -41,6 +37,15 @@ def execute_statement():
 
     logging.debug("executing ksql statement...")
 
+    data = json.dumps(
+             {
+               'ksql': json.dumps(KSQL_STATEMENT),
+               'streamsProperties': json.dumps(KSQL_STATEMENT),
+                "streamsProperties": {
+                         "ksql.streams.auto.offset.reset": "earliest"
+                }
+             }
+           )
     resp = requests.post(
         f"{KSQL_URL}/ksql",
         headers={"Content-Type": "application/vnd.ksql.v1+json"},
@@ -52,8 +57,12 @@ def execute_statement():
         ),
     )
 
-    # Ensure that a 2XX status code was returned
-    resp.raise_for_status()
+    # Raise an error if not success
+    try:
+        resp.raise_for_status()
+    except requests.exceptions.HTTPError as e: 
+        print(e)
+        logger.info("Error with KSQL POST request.")
 
 
 if __name__ == "__main__":

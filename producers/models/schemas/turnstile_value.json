@@ -1,7 +1,7 @@
 {
   "type": "record",
   "namespace": "com.udaciity",
-  "name": "chicago.transportation.train.turnstile.value",
+  "name": "cta_stations.turnstile.value",
   "fields": [
     { "name": "station_id", "type": "int" },
     { "name": "station_name", "type": "string" },

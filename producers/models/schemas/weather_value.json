@@ -1,10 +1,9 @@
 {
   "namespace": "com.udacity",
   "type": "record",
-  "name": "chicago.transportation.train.weather.value",
+  "name": "cta_stations.weather.value",
   "fields": [
-    {
-      "name": "timestamp", "type": "long"
-    }
+      {"name": "temperature", "type": "int"},
+      {"name": "status", "type": "string"}
   ]
 }

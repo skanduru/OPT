@@ -1,7 +1,6 @@
 import logging
 import pytest
-from connector import configure_connector
-import pdb
+from producers.connector import configure_connector
 
 logger = logging.getLogger(__name__)
 

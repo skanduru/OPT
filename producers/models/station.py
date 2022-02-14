@@ -4,8 +4,8 @@ from pathlib import Path
 
 from confluent_kafka import avro
 
-from models import Turnstile
-from models.producer import Producer
+from .turnstile import Turnstile
+from .producer import Producer
 
 
 logger = logging.getLogger(__name__)
@@ -17,7 +17,7 @@ class Station(Producer):
     key_schema = avro.load(f"{Path(__file__).parents[0]}/schemas/arrival_key.json")
 
     #
-    # TODO: Define this value schema in `schemas/station_value.json, then uncomment the below
+    # This value schema defined as per `schemas/station_value.json
     #
     value_schema = avro.load(f"{Path(__file__).parents[0]}/schemas/arrival_value.json")
 
@@ -31,19 +31,14 @@ class Station(Producer):
             .replace("'", "")
         )
 
-        #
-        #
-        # TODO: Complete the below by deciding on a topic name, number of partitions, and number of
-        # replicas
-        #
-        #
-        topic_name = f"{Station.value_schema.namespace}-{station_name}" # TODO: Come up with a better topic name
+        # Topics created per station for the train
+        topic_name = f"{Station.value_schema.namespace}-{station_name}"
         super().__init__(
             topic_name,
             key_schema=Station.key_schema,
-            value_schema=Station.value_schema, # TODO: Uncomment once schema is defined
-            num_partitions=1, # TODO: num_partitions=???,
-            num_replicas=1 # TODO: num_replicas=???,
+            value_schema=Station.value_schema,
+            num_partitions=1,
+            num_replicas=1
         )
 
         self.station_id = int(station_id)
@@ -57,11 +52,8 @@ class Station(Producer):
 
     def run(self, train, direction, prev_station_id, prev_direction):
         """Simulates train arrivals at this station"""
-        #
-        #
-        # TODO: Complete this function by producing an arrival message to Kafka
-        #
-        #
+        
+        # Train arrivals are being produced here
         self.produce(
             topic=self.topic_name,
             key={"timestamp": self.time_millis()},

@@ -1,6 +1,6 @@
 {
   "type": "record",
-  "name": "chicago.transportation.train.arrivals.value",
+  "name": "cta_stations.arrivals.value",
   "namespace": "com.udacity.opt.arrivals",
   "fields": [
       { "name": "station_id", "type": "int" },

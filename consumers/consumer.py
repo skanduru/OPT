@@ -3,13 +3,16 @@ import logging
 
 import confluent_kafka
 from confluent_kafka import Consumer
-from confluent_kafka.avro import AvroConsumer
+from confluent_kafka.avro import AvroConsumer, CachedSchemaRegistryClient
 from confluent_kafka.avro.serializer import SerializerError
 from tornado import gen
 
 
 logger = logging.getLogger(__name__)
 
+KAFKA_URL="PLAINTEXT://localhost:9092"
+CL_GROUP_ID="cta_consumer"
+SCHEMA_REGISTRY_URL="http://localhost:8081"
 
 class KafkaConsumer:
     """Defines the base kafka consumer class"""
@@ -31,45 +34,40 @@ class KafkaConsumer:
         self.offset_earliest = offset_earliest
 
         #
-        #
-        # TODO: Configure the broker properties below. Make sure to reference the project README
-        # and use the Host URL for Kafka and Schema Registry!
-        #
+        # Broker properties for the client connection and schema-registry
         #
         self.broker_properties = {
-                #
-                # TODO
-                #
+            'bootstrap.servers': KAFKA_URL,
+            "group.id" : CL_GROUP_ID
         }
 
-        # TODO: Create the Consumer, using the appropriate type.
+        # Create client based on options
         if is_avro is True:
-            self.broker_properties["schema.registry.url"] = "http://localhost:8081"
-            #self.consumer = AvroConsumer(...)
+            # Create a Cached Schema Registry client
+            schema_registry = CachedSchemaRegistryClient({'url': self.broker_properties.get('SCHEMA_REGISTRY')})
+
+            self.broker_properties["schema.registry.url"] = SCHEMA_REGISTRY_URL
+            self.consumer = AvroConsumer(
+                         config = self.broker_properties,
+                         schema_registry = schema_registry,
+                        )
         else:
-            #self.consumer = Consumer(...)
+            self.consumer = Consumer(self.broker_properties)
             pass
 
         #
-        #
-        # TODO: Configure the AvroConsumer and subscribe to the topics. Make sure to think about
+        #  subscribe to the topics
         # how the `on_assign` callback should be invoked.
-        #
-        #
-        # self.consumer.subscribe( TODO )
+        self.consumer.subscribe( [self.topic_name_pattern],
+               on_assign = self.on_assign,
+             )
 
     def on_assign(self, consumer, partitions):
         """Callback for when topic assignment takes place"""
-        # TODO: If the topic is configured to use `offset_earliest` set the partition offset to
-        # the beginning or earliest
-        logger.info("on_assign is incomplete - skipping")
         for partition in partitions:
-            pass
-            #
-            #
-            # TODO
-            #
-            #
+            for partition in partitions:
+                if self.offset_earliest:
+                    partition.offset = OFFSET_BEGINNING
 
         logger.info("partitions assigned for %s", self.topic_name_pattern)
         consumer.assign(partitions)
@@ -79,26 +77,31 @@ class KafkaConsumer:
         while True:
             num_results = 1
             while num_results > 0:
-                num_results = self._consume()
+                num_results = await self._consume()
             await gen.sleep(self.sleep_secs)
 
-    def _consume(self):
-        """Polls for a message. Returns 1 if a message was received, 0 otherwise"""
-        #
-        #
-        # TODO: Poll Kafka for messages. Make sure to handle any errors or exceptions.
-        # Additionally, make sure you return 1 when a message is processed, and 0 when no message
-        # is retrieved.
-        #
-        #
-        logger.info("_consume is incomplete - skipping")
-        return 0
+    async def _consume(self):
+        """
+           Polls for a message.
+           Returns 1 if a message was received, 0 otherwise
+           Handle error cases
+        """
+        ret = 0
+        message = self.consumer.poll(1.0)
+        if message is None:
+            print("No message received by consumer")
+        elif message.error() is not None:
+            print(f"error from consumer {message.error()}")
+        else:
+            try:
+                logger.info(message.value())
+                ret = 1
+            except:
+                logger.info(f"Failed to unpack message {e}")
+        return ret
 
 
     def close(self):
         """Cleans up any open kafka consumers"""
-        #
-        #
-        # TODO: Cleanup the kafka consumer
-        #
-        #
+        self.consumer.close()
+        logger.info("Closing the active consumer")
