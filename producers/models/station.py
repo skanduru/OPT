@@ -32,7 +32,7 @@ class Station(Producer):
         )
 
         # Topics created per station for the train
-        topic_name = f"{Station.value_schema.namespace}-{station_name}"
+        topic_name = f"{Station.value_schema.namespace}"
         super().__init__(
             topic_name,
             key_schema=Station.key_schema,

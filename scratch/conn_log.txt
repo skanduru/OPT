@@ -1,0 +1,28 @@
+# curl localhost:8083/connectors/stations | python -m json.tool
+{
+    "name": "stations",
+    "config": {
+        "connector.class": "io.confluent.connect.jdbc.JdbcSourceConnector",
+        "incrementing.column.name": "stop_id",
+        "connection.password": "chicago",
+        "batch.max.rows": "500",
+        "table.whitelist": "stations",
+        "mode": "incrementing",
+        "key.converter.schemas.enable": "false",
+        "topic.prefix": "jdbc.",
+        "connection.user": "cta_admin",
+        "poll.interval.ms": "10000",
+        "value.converter.schemas.enable": "false",
+        "name": "stations",
+        "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+        "connection.url": "jdbc:postgresql://localhost:5432/cta",
+        "key.converter": "org.apache.kafka.connect.json.JsonConverter"
+    },
+    "tasks": [
+        {
+            "connector": "stations",
+            "task": 0
+        }
+    ],
+    "type": "source"
+}

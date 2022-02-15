@@ -14,19 +14,14 @@ KSQL_URL = "http://localhost:8088"
 
 
 KSQL_STATEMENT = """
-CREATE TABLE turnstile (
-    STATION_ID INTEGER,
-    STATION_NAME VARCHAR,
-    Line VARCHAR,
-) WITH (KAFKA_TOPIC='turnstile',
-      VALUE_FORMAT='avro',
-      key='STATION_ID');
-);
-
-CREATE TABLE turnstile_summary
-WITH (KAFKA_TOPIC='TURNSTILE_SUMMARY', VALUE_FORMAT='json') AS
-    SELECT STATION_ID, STATION_NAME, COUNT(STATION_ID) as COUNT
-    FROM turnstile GROUP BY STATION_ID, STATION_NAME;
+CREATE TABLE turnstile ( \
+    STATION_ID INTEGER, STATION_NAME VARCHAR, Line VARCHAR) \
+    WITH (KAFKA_TOPIC='cta_stations.turnstile', VALUE_FORMAT='avro', \
+      key='STATION_ID'); \
+CREATE TABLE turnstile_summary  \
+WITH (KAFKA_TOPIC='TURNSTILE_SUMMARY', VALUE_FORMAT='json') AS  \
+    SELECT STATION_ID, STATION_NAME, COUNT(STATION_ID) as COUNT \
+    FROM turnstile GROUP BY STATION_ID, STATION_NAME; \
 """
 
 
@@ -37,24 +32,14 @@ def execute_statement():
 
     logging.debug("executing ksql statement...")
 
-    data = json.dumps(
-             {
-               'ksql': json.dumps(KSQL_STATEMENT),
-               'streamsProperties': json.dumps(KSQL_STATEMENT),
-                "streamsProperties": {
-                         "ksql.streams.auto.offset.reset": "earliest"
-                }
-             }
-           )
+    data = {}
+    data['ksql'] = KSQL_STATEMENT
+    data['ksql.streams.auto.offset.reset'] = "earliest"
+
     resp = requests.post(
         f"{KSQL_URL}/ksql",
         headers={"Content-Type": "application/vnd.ksql.v1+json"},
-        data=json.dumps(
-            {
-                "ksql": KSQL_STATEMENT,
-                "streamsProperties": {"ksql.streams.auto.offset.reset": "earliest"},
-            }
-        ),
+        data = json.dumps(data)
     )
 
     # Raise an error if not success
