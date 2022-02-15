@@ -10,6 +10,7 @@ from confluent_kafka import avro
 import requests
 
 from .producer import Producer
+from enum import Enum
 
 
 logger = logging.getLogger(__name__)
@@ -18,7 +19,8 @@ logger = logging.getLogger(__name__)
 class Weather(Producer):
     """Defines a simulated weather model"""
 
-    status = IntEnum(
+    # consider as Categorical values than integers
+    status = Enum(
         "status", "sunny partly_cloudy cloudy windy precipitation", start=0
     )
 

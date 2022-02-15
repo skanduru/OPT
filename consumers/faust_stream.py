@@ -74,7 +74,10 @@ async def TransformStation(stations):
                       line         = transformedLine
                   )
 
-        await out_topic.send(value = transformed_station)
+        #
+        # A leaky-budket or window implementation for callers to process
+
+        table[station.station_id] = transformed_station
 
 if __name__ == "__main__":
     app.main()

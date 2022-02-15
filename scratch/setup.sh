@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 
+conda install -y pytest &
 apt update
 apt install -y openssh-client less
-git config --global user.name "First Last"
-git config --global user.mail "me@example.com"
+git config --global user.name "Srinivasa Kanduru"
+git config --global user.mail "skanduru@gmail.com"
 git remote remove origin
-git remote add origin git@github.com:mygit/myrepo.git
+git remote add origin git@github.com:skanduru/OPT.git
 git push --set-upstream origin master
-conda install -y pytest
 
 << ENV
 Check the following:

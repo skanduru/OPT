@@ -31,8 +31,8 @@ class Station(Producer):
             .replace("'", "")
         )
 
-        # Topics created per station for the train
-        topic_name = f"{Station.value_schema.namespace}"
+        # Topic on the arrival of the train on a per station basis
+        topic_name = f"{Station.value_schema.namespace}-{station_name}"
         super().__init__(
             topic_name,
             key_schema=Station.key_schema,

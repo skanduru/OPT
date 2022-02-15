@@ -38,7 +38,8 @@ class KafkaConsumer:
         #
         self.broker_properties = {
             'bootstrap.servers': KAFKA_URL,
-            "group.id" : CL_GROUP_ID
+            "group.id" : CL_GROUP_ID,
+            "auto.offset.reset" : "earliest" if offset_earliest else "latest"
         }
 
         # Create client based on options
@@ -94,7 +95,8 @@ class KafkaConsumer:
             print(f"error from consumer {message.error()}")
         else:
             try:
-                logger.info(message.value())
+                logger.debug("handover to caller")
+                self.message_handler(message)
                 ret = 1
             except:
                 logger.info(f"Failed to unpack message {e}")
