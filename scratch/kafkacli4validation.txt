@@ -1,0 +1,13 @@
+# get all topics
+kafka-topics --list --zookeeper localhost:2181
+# first Avro topics
+kafka-avro-console-consumer --from-beginning --bootstrap-server localhost:9092 --max-messages 10  --topic YourtrunstileTopic
+kafka-avro-console-consumer --from-beginning --bootstrap-server localhost:9092 --max-messages 10  --topic YourArrivalTopic
+# ensure that status is string not int or float
+kafka-avro-console-consumer --from-beginning --bootstrap-server localhost:9092 --max-messages 10  --topic YourWeatherTopic
+# then Postgress topics
+kafka-console-consumer  --from-beginning --bootstrap-server localhost:9092 --max-messages 10 --topic YourPostgressTopic 
+kafka-console-consumer --from-beginning --bootstrap-server localhost:9092 --max-messages 10 --topic YourTransformationTableTopic
+# ensure no error messages in red 
+faust -A faust_stream worker -l info
+ 
