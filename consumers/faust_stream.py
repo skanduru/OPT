@@ -54,19 +54,19 @@ table = app.Table(
  `TransformedStation` record to the string `"red"`
 """
 
-@app.agent(topic):
+@app.agent(topic)
 async def TransformStation(stations):
     async for station in stations:
         # Transform it
-        tranformedLine = None
+        transformedLine = None
         if station.red == True:
-            tranformedLine = 'red'
+            transformedLine = 'red'
         elif station.blue == True:
-            tranformedLine = 'blue'
+            transformedLine = 'blue'
         elif station.green == True:
-            tranformedLine = 'green'
+            transformedLine = 'green'
         else:
-            tranformedLine = "(null)"
+            transformedLine = "(null)"
         transformed_station = TransformedStation(
                       station_id   = station.station_id,
                       station_name = station.station_name,

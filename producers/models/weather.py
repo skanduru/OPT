@@ -26,6 +26,12 @@ class Weather(Producer):
 
     key_schema = avro.load(f"{Path(__file__).parents[0]}/schemas/weather_key.json")
     value_schema = avro.load(f"{Path(__file__).parents[0]}/schemas/weather_value.json")
+    fd = open(f"{Path(__file__).parents[0]}/schemas/weather_value.json", 'r')
+    vschema = fd.read()
+    fd.close()
+    fd = open(f"{Path(__file__).parents[0]}/schemas/weather_key.json", 'r')
+    kschema = fd.read()
+    fd.close()
 
     winter_months = set((0, 1, 2, 3, 10, 11))
     summer_months = set((6, 7, 8))
@@ -73,7 +79,8 @@ class Weather(Producer):
     def run(self, month):
         self._set_weather(month)
         data = {
-            "value_schema": Weather.value_schema,
+            "key_schema": Weather.kschema,
+            "value_schema": Weather.vschema,
             "records": [
                 {
                   "key": {"timestamp": self.time_millis()},

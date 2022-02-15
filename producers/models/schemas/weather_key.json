@@ -1,7 +1,7 @@
 {
   "namespace": "com.udacity",
   "type": "record",
-  "name": "chicago.transportation.train.weather.key",
+  "name": "cta_stations.weather.key",
   "fields": [
     {
       "name": "timestamp",

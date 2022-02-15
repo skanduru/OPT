@@ -60,23 +60,21 @@ class TimeSimulation:
             Line(Line.colors.green, self.raw_df[self.raw_df["green"]]),
         ]
 
+    def run_connector(self):
+        logger.info("loading kafka connect jdbc source connector")
+        configure_connector()
+
     def run(self):
         curr_time = datetime.datetime.utcnow().replace(
             hour=0, minute=0, second=0, microsecond=0
         )
-        """
         logger.info("Beginning simulation, press Ctrl+C to exit at any time")
-        logger.info("loading kafka connect jdbc source connector")
-        configure_connector()
-        """
-
-        logger.info("beginning cta train simulation")
-        weather = Weather(curr_time.month)
         try:
             while True:
                 logger.debug("simulation running: %s", curr_time.isoformat())
                 # Send weather on the top of the hour
                 if curr_time.minute == 0:
+                    weather = Weather(curr_time.month)
                     weather.run(curr_time.month)
                 _ = [line.run(curr_time, self.time_step) for line in self.train_lines]
                 curr_time = curr_time + self.time_step
@@ -87,4 +85,6 @@ class TimeSimulation:
 
 
 if __name__ == "__main__":
-    TimeSimulation().run()
+    ts = TimeSimulation()
+    ts.run_connector()
+    ts.run()

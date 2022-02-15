@@ -15,7 +15,7 @@ class Weather:
 
     def process_message(self, message):
         """
-          Handles incoming weather data"""
+          Handles incoming weather data
           :param message: weather event to process
         """
         logging.info("Processing weather event:")
