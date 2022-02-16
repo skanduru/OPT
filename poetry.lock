@@ -2,7 +2,7 @@
 name = "aiohttp"
 version = "3.8.1"
 description = "Async http client/server framework (asyncio)"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.6"
 
@@ -19,10 +19,21 @@ yarl = ">=1.0,<2.0"
 speedups = ["aiodns", "brotli", "cchardet"]
 
 [[package]]
+name = "aiohttp-cors"
+version = "0.7.0"
+description = "CORS support for aiohttp"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+aiohttp = ">=1.1"
+
+[[package]]
 name = "aiosignal"
 version = "1.2.0"
 description = "aiosignal: a list of registered asynchronous callbacks"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.6"
 
@@ -61,7 +72,7 @@ tests = ["pytest", "pytest-asyncio", "mypy (>=0.800)"]
 name = "async-timeout"
 version = "4.0.2"
 description = "Timeout context manager for asyncio programs"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.6"
 
@@ -145,7 +156,7 @@ python-versions = "*"
 name = "charset-normalizer"
 version = "2.0.11"
 description = "The Real First Universal Charset Detector. Open, modern and actively maintained alternative to Chardet."
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.5.0"
 
@@ -154,14 +165,11 @@ unicode_backport = ["unicodedata2"]
 
 [[package]]
 name = "click"
-version = "8.0.3"
+version = "7.1.2"
 description = "Composable command line interface toolkit"
 category = "main"
 optional = false
-python-versions = ">=3.6"
-
-[package.dependencies]
-colorama = {version = "*", markers = "platform_system == \"Windows\""}
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
 [[package]]
 name = "colorama"
@@ -170,6 +178,28 @@ description = "Cross-platform colored terminal text."
 category = "main"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
+
+[[package]]
+name = "colorclass"
+version = "2.2.2"
+description = "Colorful worry-free console applications for Linux, Mac OS X, and Windows."
+category = "main"
+optional = false
+python-versions = ">=2.6"
+
+[[package]]
+name = "colorlog"
+version = "6.6.0"
+description = "Add colours to the output of Python's logging module."
+category = "main"
+optional = false
+python-versions = ">=3.6"
+
+[package.dependencies]
+colorama = {version = "*", markers = "sys_platform == \"win32\""}
+
+[package.extras]
+development = ["black", "flake8", "mypy", "pytest", "types-colorama"]
 
 [[package]]
 name = "confluent-kafka"
@@ -200,6 +230,17 @@ tomli = {version = "*", optional = true, markers = "extra == \"toml\""}
 
 [package.extras]
 toml = ["tomli"]
+
+[[package]]
+name = "croniter"
+version = "1.3.1"
+description = "croniter provides iteration for datetime object with cron like format"
+category = "main"
+optional = false
+python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
+
+[package.dependencies]
+python-dateutil = "*"
 
 [[package]]
 name = "fastapi"
@@ -234,6 +275,47 @@ snappy = ["python-snappy"]
 zstandard = ["zstandard"]
 
 [[package]]
+name = "faust"
+version = "1.10.4"
+description = "Python Stream processing."
+category = "main"
+optional = false
+python-versions = ">=3.6.0"
+
+[package.dependencies]
+aiohttp = ">=3.5.2,<4.0"
+aiohttp-cors = ">=0.7,<2.0"
+click = ">=6.7,<8.0"
+colorclass = ">=2.2,<3.0"
+croniter = ">=0.3.16"
+mode = ">=4.3.2,<4.4"
+mypy-extensions = "*"
+opentracing = ">=1.3.0,<2.0.0"
+robinhood-aiokafka = ">=1.1.6,<1.2"
+terminaltables = ">=3.1,<4.0"
+venusian = ">=1.1,<2.0"
+yarl = ">=1.0,<2.0"
+
+[package.extras]
+aiodns = ["aiodns (>=1.1)"]
+aiomonitor = ["aiomonitor (>=0.4.4)"]
+cchardet = ["cchardet (>=2.1)"]
+ciso8601 = ["ciso8601"]
+ckafka = ["confluent-kafka (>=1.2.0,<1.3.0)"]
+cython = ["cython"]
+datadog = ["datadog"]
+debug = ["setproctitle (>=1.1)", "aiomonitor (>=0.4.4)"]
+eventlet = ["aioeventlet (>=0.5.1,<0.6.0)", "dnspython"]
+fast = ["aiodns (>=1.1)", "cchardet (>=2.1)", "ciso8601", "cython", "orjson (>=2.0,<3.0)", "setproctitle (>=1.1)"]
+orjson = ["orjson (>=2.0,<3.0)"]
+redis = ["aredis (>=1.1.3,<2.0)"]
+rocksdb = ["python-rocksdb (>=0.6.7)"]
+setproctitle = ["setproctitle (>=1.1)"]
+statsd = ["statsd (>=3.3.0,<3.4.0)"]
+uvloop = ["uvloop (>=0.8.1)"]
+yaml = ["pyyaml (>=5.1)"]
+
+[[package]]
 name = "freezegun"
 version = "1.1.0"
 description = "Let your Python tests travel through time"
@@ -248,7 +330,7 @@ python-dateutil = ">=2.7"
 name = "frozenlist"
 version = "1.3.0"
 description = "A list-like structure which implements collections.abc.MutableSequence"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.7"
 
@@ -277,10 +359,35 @@ optional = false
 python-versions = "*"
 
 [[package]]
+name = "kafka-python"
+version = "1.4.7"
+description = "Pure Python client for Apache Kafka"
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
+name = "mode"
+version = "4.3.2"
+description = "AsyncIO Service-based programming."
+category = "main"
+optional = false
+python-versions = "~=3.6"
+
+[package.dependencies]
+colorlog = ">=2.9.0"
+mypy-extensions = "*"
+
+[package.extras]
+eventlet = ["aioeventlet (>=0.5.1,<0.6.0)", "dnspython"]
+gevent = ["aiogevent (>=0.2,<1.0)"]
+uvloop = ["uvloop (>=0.8.1)"]
+
+[[package]]
 name = "multidict"
 version = "6.0.2"
 description = "multidict implementation"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.7"
 
@@ -305,7 +412,7 @@ python2 = ["typed-ast (>=1.4.0,<2)"]
 name = "mypy-extensions"
 version = "0.4.3"
 description = "Experimental type system extensions for programs checked with the mypy typechecker."
-category = "dev"
+category = "main"
 optional = false
 python-versions = "*"
 
@@ -316,6 +423,17 @@ description = "NumPy is the fundamental package for array computing with Python.
 category = "main"
 optional = false
 python-versions = ">=3.8"
+
+[[package]]
+name = "opentracing"
+version = "1.3.0"
+description = "OpenTracing API for Python. See documentation at http://opentracing.io"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.extras]
+tests = ["doubles", "flake8 (<3)", "flake8-quotes", "mock (<1.1.0)", "pytest (>=2.7,<3)", "pytest-cov", "pytest-mock", "sphinx", "sphinx-rtd-theme"]
 
 [[package]]
 name = "packaging"
@@ -528,6 +646,20 @@ socks = ["PySocks (>=1.5.6,!=1.5.7)", "win-inet-pton"]
 use_chardet_on_py3 = ["chardet (>=3.0.2,<5)"]
 
 [[package]]
+name = "robinhood-aiokafka"
+version = "1.1.6"
+description = "Kafka integration with asyncio."
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+kafka-python = ">=1.4.6,<1.5"
+
+[package.extras]
+snappy = ["python-snappy (>=0.5)"]
+
+[[package]]
 name = "six"
 version = "1.16.0"
 description = "Python 2 and 3 compatibility utilities"
@@ -556,6 +688,14 @@ anyio = ">=3.0.0,<4"
 
 [package.extras]
 full = ["itsdangerous", "jinja2", "python-multipart", "pyyaml", "requests"]
+
+[[package]]
+name = "terminaltables"
+version = "3.1.10"
+description = "Generate simple tables in terminals from a nested list of strings."
+category = "main"
+optional = false
+python-versions = ">=2.6"
 
 [[package]]
 name = "tomli"
@@ -603,10 +743,22 @@ h11 = ">=0.8"
 standard = ["websockets (>=10.0)", "httptools (>=0.2.0,<0.4.0)", "watchgod (>=0.6)", "python-dotenv (>=0.13)", "PyYAML (>=5.1)", "uvloop (>=0.14.0,!=0.15.0,!=0.15.1)", "colorama (>=0.4)"]
 
 [[package]]
+name = "venusian"
+version = "1.2.0"
+description = "A library for deferring decorator actions"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.extras]
+docs = ["sphinx", "repoze.sphinx.autointerface"]
+testing = ["pytest", "coverage", "pytest-cov"]
+
+[[package]]
 name = "yarl"
 version = "1.7.2"
 description = "Yet another URL library"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.6"
 
@@ -617,7 +769,7 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "1931f0e98f92ba3484d61e80efba82cee3d80d2cf47835d10591dbfbab3ac067"
+content-hash = "97cb323ff4e1215b9ec4458f539796394cc2398d61a0a5592acf4e99508e242b"
 
 [metadata.files]
 aiohttp = [
@@ -694,6 +846,10 @@ aiohttp = [
     {file = "aiohttp-3.8.1-cp39-cp39-win_amd64.whl", hash = "sha256:1c182cb873bc91b411e184dab7a2b664d4fea2743df0e4d57402f7f3fa644bac"},
     {file = "aiohttp-3.8.1.tar.gz", hash = "sha256:fc5471e1a54de15ef71c1bc6ebe80d4dc681ea600e68bfd1cbce40427f0b7578"},
 ]
+aiohttp-cors = [
+    {file = "aiohttp-cors-0.7.0.tar.gz", hash = "sha256:4d39c6d7100fd9764ed1caf8cebf0eb01bf5e3f24e2e073fda6234bc48b19f5d"},
+    {file = "aiohttp_cors-0.7.0-py3-none-any.whl", hash = "sha256:0451ba59fdf6909d0e2cd21e4c0a43752bc0703d33fc78ae94d9d9321710193e"},
+]
 aiosignal = [
     {file = "aiosignal-1.2.0-py3-none-any.whl", hash = "sha256:26e62109036cd181df6e6ad646f91f0dcfd05fe16d0cb924138ff2ab75d64e3a"},
     {file = "aiosignal-1.2.0.tar.gz", hash = "sha256:78ed67db6c7b7ced4f98e495e572106d5c432a93e1ddd1bf475e1dc05f5b7df2"},
@@ -738,12 +894,20 @@ charset-normalizer = [
     {file = "charset_normalizer-2.0.11-py3-none-any.whl", hash = "sha256:2842d8f5e82a1f6aa437380934d5e1cd4fcf2003b06fed6940769c164a480a45"},
 ]
 click = [
-    {file = "click-8.0.3-py3-none-any.whl", hash = "sha256:353f466495adaeb40b6b5f592f9f91cb22372351c84caeb068132442a4518ef3"},
-    {file = "click-8.0.3.tar.gz", hash = "sha256:410e932b050f5eed773c4cda94de75971c89cdb3155a72a0831139a79e5ecb5b"},
+    {file = "click-7.1.2-py2.py3-none-any.whl", hash = "sha256:dacca89f4bfadd5de3d7489b7c8a566eee0d3676333fbb50030263894c38c0dc"},
+    {file = "click-7.1.2.tar.gz", hash = "sha256:d2b5255c7c6349bc1bd1e59e08cd12acbbd63ce649f2588755783aa94dfb6b1a"},
 ]
 colorama = [
     {file = "colorama-0.4.4-py2.py3-none-any.whl", hash = "sha256:9f47eda37229f68eee03b24b9748937c7dc3868f906e8ba69fbcbdd3bc5dc3e2"},
     {file = "colorama-0.4.4.tar.gz", hash = "sha256:5941b2b48a20143d2267e95b1c2a7603ce057ee39fd88e7329b0c292aa16869b"},
+]
+colorclass = [
+    {file = "colorclass-2.2.2-py2.py3-none-any.whl", hash = "sha256:6f10c273a0ef7a1150b1120b6095cbdd68e5cf36dfd5d0fc957a2500bbf99a55"},
+    {file = "colorclass-2.2.2.tar.gz", hash = "sha256:6d4fe287766166a98ca7bc6f6312daf04a0481b1eda43e7173484051c0ab4366"},
+]
+colorlog = [
+    {file = "colorlog-6.6.0-py2.py3-none-any.whl", hash = "sha256:351c51e866c86c3217f08e4b067a7974a678be78f07f85fc2d55b8babde6d94e"},
+    {file = "colorlog-6.6.0.tar.gz", hash = "sha256:344f73204009e4c83c5b6beb00b3c45dc70fcdae3c80db919e0a4171d006fde8"},
 ]
 confluent-kafka = [
     {file = "confluent-kafka-1.8.2.tar.gz", hash = "sha256:b79e836c3554bc51c6837a8a0152f7521c9bf31342f5b8e21eba6b28044fa585"},
@@ -807,6 +971,10 @@ coverage = [
     {file = "coverage-6.3.1-pp36.pp37.pp38-none-any.whl", hash = "sha256:463e52616ea687fd323888e86bf25e864a3cc6335a043fad6bbb037dbf49bbe2"},
     {file = "coverage-6.3.1.tar.gz", hash = "sha256:6c3f6158b02ac403868eea390930ae64e9a9a2a5bbfafefbb920d29258d9f2f8"},
 ]
+croniter = [
+    {file = "croniter-1.3.1-py2.py3-none-any.whl", hash = "sha256:386a56dafb4e5e8253eb8dd5f6a681fce800871139f2831816af125e80f7ac6b"},
+    {file = "croniter-1.3.1.tar.gz", hash = "sha256:dbf02070988abc7e8955583915931b36f865c38289390be11a0c4112b55caac6"},
+]
 fastapi = [
     {file = "fastapi-0.73.0-py3-none-any.whl", hash = "sha256:f0a618aff5f6942862f2d3f20f39b1c037e33314d1b8207fd1c3a2cca76dfd8c"},
     {file = "fastapi-0.73.0.tar.gz", hash = "sha256:dcfee92a7f9a72b5d4b7ca364bd2b009f8fc10d95ed5769be20e94f39f7e5a15"},
@@ -828,6 +996,13 @@ fastavro = [
     {file = "fastavro-1.4.9-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:32b804aa6920d80c0e94e1180d480f28f56c4b901849bd80ed180851752b5ce6"},
     {file = "fastavro-1.4.9-cp39-cp39-win_amd64.whl", hash = "sha256:f9b04acaf06b16218b47985e92d8daa98c1116d58f3cff81a5b3cf39cef9afc0"},
     {file = "fastavro-1.4.9.tar.gz", hash = "sha256:be3fec387eb2cdc9627060b5ae0690542c687dddc951b63fa11203553769ae5e"},
+]
+faust = [
+    {file = "faust-1.10.4-cp36-cp36m-macosx_10_13_x86_64.whl", hash = "sha256:128dc0b9483aa4009edcc8b23f5c132757f2329c5da1fcc144d4c1d1dd63f156"},
+    {file = "faust-1.10.4-cp37-cp37m-macosx_10_9_x86_64.whl", hash = "sha256:4ae94762a16c3ef70aa1e77772ff94395c2068ecbb99e1acce252d0f1156bd2c"},
+    {file = "faust-1.10.4-cp38-cp38-macosx_10_14_x86_64.whl", hash = "sha256:cfd47e756825eb8c6d197c1a2f25199aef2895cd31b522c74ec2dbb95dfa6fcc"},
+    {file = "faust-1.10.4-py2.py3-none-any.whl", hash = "sha256:abaade164bde21cd5f41dff24a203ff91f2c935c849c8e6a807f854bf84ea77d"},
+    {file = "faust-1.10.4.tar.gz", hash = "sha256:ffcd350ea29d528f6814fc9a42b5e50e130310da054a93e9d8216ef89a254611"},
 ]
 freezegun = [
     {file = "freezegun-1.1.0-py2.py3-none-any.whl", hash = "sha256:2ae695f7eb96c62529f03a038461afe3c692db3465e215355e1bb4b0ab408712"},
@@ -905,6 +1080,14 @@ idna = [
 iniconfig = [
     {file = "iniconfig-1.1.1-py2.py3-none-any.whl", hash = "sha256:011e24c64b7f47f6ebd835bb12a743f2fbe9a26d4cecaa7f53bc4f35ee9da8b3"},
     {file = "iniconfig-1.1.1.tar.gz", hash = "sha256:bc3af051d7d14b2ee5ef9969666def0cd1a000e121eaea580d4a313df4b37f32"},
+]
+kafka-python = [
+    {file = "kafka-python-1.4.7.tar.gz", hash = "sha256:2f29baad4b3efe05a2bb81ac268855aa01cbc68397f15bac77b494ffd7e2cada"},
+    {file = "kafka_python-1.4.7-py2.py3-none-any.whl", hash = "sha256:4fbebebfcb6fc94903fb720fe883d7bbec7298f4f1acb857c21dd3b4b114ba4b"},
+]
+mode = [
+    {file = "mode-4.3.2-py2.py3-none-any.whl", hash = "sha256:e54deee3b1988b1553425ab8b99fad957d56367eccc0d912fe009998ab651a82"},
+    {file = "mode-4.3.2.tar.gz", hash = "sha256:2df1a558dcaa42a7f9a983acb33438371a668076171be19b4c94bf0cdfd6e2eb"},
 ]
 multidict = [
     {file = "multidict-6.0.2-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:0b9e95a740109c6047602f4db4da9949e6c5945cefbad34a1299775ddc9a62e2"},
@@ -1013,6 +1196,9 @@ numpy = [
     {file = "numpy-1.22.2-cp39-cp39-win_amd64.whl", hash = "sha256:59153979d60f5bfe9e4c00e401e24dfe0469ef8da6d68247439d3278f30a180f"},
     {file = "numpy-1.22.2-pp38-pypy38_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:4a176959b6e7e00b5a0d6f549a479f869829bfd8150282c590deee6d099bbb6e"},
     {file = "numpy-1.22.2.zip", hash = "sha256:076aee5a3763d41da6bef9565fdf3cb987606f567cd8b104aded2b38b7b47abf"},
+]
+opentracing = [
+    {file = "opentracing-1.3.0.tar.gz", hash = "sha256:9b3f7c7a20c34170b9253c97121256264daf6b5f090035c732c6e2548cc5c0a7"},
 ]
 packaging = [
     {file = "packaging-21.3-py3-none-any.whl", hash = "sha256:ef103e05f519cdc783ae24ea4e2e0f508a9c99b2d4969652eed6a2e1ea5bd522"},
@@ -1130,6 +1316,13 @@ requests = [
     {file = "requests-2.27.1-py2.py3-none-any.whl", hash = "sha256:f22fa1e554c9ddfd16e6e41ac79759e17be9e492b3587efa038054674760e72d"},
     {file = "requests-2.27.1.tar.gz", hash = "sha256:68d7c56fd5a8999887728ef304a6d12edc7be74f1cfa47714fc8b414525c9a61"},
 ]
+robinhood-aiokafka = [
+    {file = "robinhood-aiokafka-1.1.6.tar.gz", hash = "sha256:efe6bdc0d6bb07945135799f34f436d2ec912774b096765daa189a66e2f89faa"},
+    {file = "robinhood_aiokafka-1.1.6-cp36-cp36m-macosx_10_13_x86_64.whl", hash = "sha256:b5ac0591a3c5a61fcfb316acfe7b4bfa336f20f048642be769bd0a321b94acda"},
+    {file = "robinhood_aiokafka-1.1.6-cp37-cp37m-macosx_10_9_x86_64.whl", hash = "sha256:a1c468d0780ad903fce41fc0ff98b37ddf390470554303c335a86b24768f677a"},
+    {file = "robinhood_aiokafka-1.1.6-cp38-cp38-macosx_10_14_x86_64.whl", hash = "sha256:12ab446ec50634b53f5a7d16502a5b048ae68f8075a568be54c0197cef549afd"},
+    {file = "robinhood_aiokafka-1.1.6-py3-none-any.whl", hash = "sha256:d8d03d73d3af3e9e74d01085294eb2848d06b4bd79ec90c0fd0be2142fabe530"},
+]
 six = [
     {file = "six-1.16.0-py2.py3-none-any.whl", hash = "sha256:8abb2f1d86890a2dfb989f9a77cfcfd3e47c2a354b01111771326f8aa26e0254"},
     {file = "six-1.16.0.tar.gz", hash = "sha256:1e61c37477a1626458e36f7b1d82aa5c9b094fa4802892072e49de9c60c4c926"},
@@ -1141,6 +1334,10 @@ sniffio = [
 starlette = [
     {file = "starlette-0.17.1-py3-none-any.whl", hash = "sha256:26a18cbda5e6b651c964c12c88b36d9898481cd428ed6e063f5f29c418f73050"},
     {file = "starlette-0.17.1.tar.gz", hash = "sha256:57eab3cc975a28af62f6faec94d355a410634940f10b30d68d31cb5ec1b44ae8"},
+]
+terminaltables = [
+    {file = "terminaltables-3.1.10-py2.py3-none-any.whl", hash = "sha256:e4fdc4179c9e4aab5f674d80f09d76fa436b96fdc698a8505e0a36bf0804a874"},
+    {file = "terminaltables-3.1.10.tar.gz", hash = "sha256:ba6eca5cb5ba02bba4c9f4f985af80c54ec3dccf94cfcd190154386255e47543"},
 ]
 tomli = [
     {file = "tomli-1.2.3-py3-none-any.whl", hash = "sha256:e3069e4be3ead9668e21cb9b074cd948f7b3113fd9c8bba083f48247aab8b11c"},
@@ -1157,6 +1354,10 @@ urllib3 = [
 uvicorn = [
     {file = "uvicorn-0.17.4-py3-none-any.whl", hash = "sha256:e85872d84fb651cccc4c5d2a71cf7ead055b8fb4d8f1e78e36092282c0cf2aec"},
     {file = "uvicorn-0.17.4.tar.gz", hash = "sha256:25850bbc86195a71a6477b3e4b3b7b4c861fb687fb96912972ce5324472b1011"},
+]
+venusian = [
+    {file = "venusian-1.2.0-py2.py3-none-any.whl", hash = "sha256:2f2d077a1eedc3fda40425f65687c8c494da7e83d7c23bc2c4d1a40eb3ca5b6d"},
+    {file = "venusian-1.2.0.tar.gz", hash = "sha256:64ec8285b80b110d0ae5db4280e90e31848a59db98db1aba4d7d46f48ce91e3e"},
 ]
 yarl = [
     {file = "yarl-1.7.2-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:f2a8508f7350512434e41065684076f640ecce176d262a7d54f0da41d99c5a95"},
